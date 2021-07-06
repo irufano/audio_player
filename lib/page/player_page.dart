@@ -36,7 +36,7 @@ class _PlayerPageState extends State<PlayerPage> {
         ],
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+        padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
         width: double.infinity,
         child: Column(
           children: [
@@ -115,6 +115,7 @@ class _PlayerPageState extends State<PlayerPage> {
                     stream: playerStream.mediaStateStream,
                     builder: (context, snapshot) {
                       final mediaState = snapshot.data;
+
                       return SeekBar(
                         duration:
                             mediaState?.mediaItem?.duration ?? Duration.zero,

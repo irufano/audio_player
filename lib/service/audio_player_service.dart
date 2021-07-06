@@ -9,9 +9,11 @@ class AudioPlayerService {
 
   Future<dynamic> setup() async {
     handler = await AudioService.init(
-      builder: () => LoggingAudioHandler(MainSwitchHandler([
-        AudioPlayerHandler(),
-      ])),
+      builder: () => LoggingAudioHandler(
+        MainSwitchHandler([
+          AudioPlayerHandler(),
+        ]),
+      ),
       config: const AudioServiceConfig(
         androidNotificationChannelId: 'com.ryanheise.myapp.channel.audio',
         androidNotificationChannelName: 'Audio playback',

@@ -6,10 +6,11 @@ import 'package:audio_service/audio_service.dart';
 var _audioPlayerService = locator<AudioPlayerService>();
 
 /// Extension methods for our custom actions.
-extension DemoAudioHandler on AudioHandler {
+extension AudioHandlerExtension on AudioHandler {
   Future<void> switchToHandler(int? index) async {
     if (index == null) return;
     await _audioPlayerService.handler
         .customAction('switchToHandler', <String, dynamic>{'index': index});
   }
 }
+

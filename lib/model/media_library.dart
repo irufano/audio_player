@@ -13,22 +13,25 @@ class MediaLibrary {
     ],
     albumsRootId: [
       MediaItem(
-        id: 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3',
-        album: "Science Friday",
-        title: "A Salute To Head-Scratching Science",
-        artist: "Science Friday and WNYC Studios",
-        duration: const Duration(milliseconds: 5739820),
+        // 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3'
+        id: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3',
+        album: "Sound Helix",
+        title: "SoundHelix Song 10 The Examples 1 to 11 are The Same",
+        artist: "T. Schürger",
+        duration: const Duration(milliseconds: 527000),
         artUri: Uri.parse(
-            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
+            'https://thumbs.dreamstime.com/b/dynamic-radial-color-sound-equalizer-design-music-album-cover-template-abstract-circular-digital-data-form-vector-160916775.jpg'),
       ),
       MediaItem(
-        id: 'https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3',
-        album: "Science Friday",
-        title: "From Cat Rheology To Operatic Incompetence",
-        artist: "Science Friday and WNYC Studios",
-        duration: const Duration(milliseconds: 2856950),
+        // 'https://s3.amazonaws.com/scifri-segments/scifri201711241.mp3'
+        // 'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'
+        id: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3',
+        album: "Sound Helix",
+        title: "SoundHelix Song 9",
+        artist: "T. Schürger",
+        duration: const Duration(milliseconds: 389000),
         artUri: Uri.parse(
-            'https://media.wnyc.org/i/1400/1400/l/80/1/ScienceFriday_WNYCStudios_1400.jpg'),
+            'https://99designs-blog.imgix.net/blog/wp-content/uploads/2017/12/attachment_68585523.jpg'),
       ),
     ],
   };

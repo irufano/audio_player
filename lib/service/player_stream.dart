@@ -15,7 +15,7 @@ class PlayerStream {
   Stream<MediaState> get mediaStateStream =>
       Rx.combineLatest2<MediaItem?, Duration, MediaState>(
           _audioPlayerService.handler.mediaItem,
-          AudioService.positionStream,
+          AudioService.position,
           (mediaItem, position) => MediaState(mediaItem, position));
 
   /// A stream reporting the combined state of the current queue and the current

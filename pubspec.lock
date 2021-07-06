@@ -13,7 +13,7 @@ packages:
     description:
       path: audio_service
       ref: one-isolate
-      resolved-ref: "4293d5565beffde2068d49137c7f721e7f9b7a88"
+      resolved-ref: "4996134a37d125ebeb958fa390571584e3aaf56d"
       url: "https://github.com/ryanheise/audio_service.git"
     source: git
     version: "0.16.2"
