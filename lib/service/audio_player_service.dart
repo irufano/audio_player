@@ -2,7 +2,7 @@ import 'package:audio_player/service/audio_player_handler.dart';
 import 'package:audio_player/service/main_switch_handler.dart';
 import 'package:audio_service/audio_service.dart';
 
-import '../common.dart';
+import 'logging_audio_handler.dart';
 
 class AudioPlayerService {
   late AudioHandler handler;
