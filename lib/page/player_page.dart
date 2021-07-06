@@ -4,8 +4,7 @@ import 'package:audio_player/model/queue_state.dart';
 import 'package:audio_player/service/audio_player_service.dart';
 import 'package:audio_player/service/player_stream.dart';
 import 'package:audio_player/widget/player_buttons.dart';
-import 'package:audio_player/widget/seek_bar.dart';
-import 'package:audio_service/audio_service.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
@@ -202,13 +201,61 @@ class _PlayerPageState extends State<PlayerPage> {
                         builder: (context, snapshot) {
                           final mediaState = snapshot.data;
 
-                          return SeekBar(
-                            duration: mediaState?.mediaItem?.duration ??
-                                Duration.zero,
-                            position: mediaState?.position ?? Duration.zero,
-                            onChangeEnd: (newPosition) {
-                              _audioPlayerService.handler.seek(newPosition);
-                            },
+                          var now = mediaState?.position ?? Duration.zero;
+                          var buffered =
+                              mediaState?.bufferedPosition ?? Duration.zero;
+                          var total =
+                              mediaState?.mediaItem?.duration ?? Duration.zero;
+
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: ProgressBar(
+                                  thumbRadius: 5.0,
+                                  timeLabelLocation: TimeLabelLocation.none,
+                                  progress: now,
+                                  buffered: buffered,
+                                  total: total,
+                                  onSeek: (newPosition) {
+                                    _audioPlayerService.handler
+                                        .seek(newPosition);
+                                  },
+                                ),
+                              ),
+                              Stack(
+                                children: [
+                                  Container(
+                                    width: double.infinity,
+                                    height: 20,
+                                  ),
+                                  Positioned(
+                                    left: 0.0,
+                                    bottom: 0.0,
+                                    child: Text(
+                                        RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                                                .firstMatch("$now")
+                                                ?.group(1) ??
+                                            '$now',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .caption),
+                                  ),
+                                  Positioned(
+                                    right: 0.0,
+                                    bottom: 0.0,
+                                    child: Text(
+                                        RegExp(r'((^0*[1-9]\d*:)?\d{2}:\d{2})\.\d+$')
+                                                .firstMatch("$total")
+                                                ?.group(1) ??
+                                            '$total',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .caption),
+                                  ),
+                                ],
+                              ),
+                            ],
                           );
                         },
                       ),

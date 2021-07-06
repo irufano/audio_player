@@ -30,6 +30,7 @@ class _SeekBarState extends State<SeekBar> {
     if (_dragValue != null && !_dragging) {
       _dragValue = null;
     }
+
     return Stack(
       children: [
         SliderTheme(
@@ -37,6 +38,7 @@ class _SeekBarState extends State<SeekBar> {
             trackShape: CustomTrackShape(),
             thumbColor: Theme.of(context).primaryColor,
             thumbShape: RoundSliderThumbShape(enabledThumbRadius: 5),
+            valueIndicatorColor: Colors.red,
           ),
           child: Slider(
             min: 0.0,
