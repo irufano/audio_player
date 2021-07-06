@@ -8,6 +8,7 @@ import 'package:audio_player/widget/seek_bar.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:marquee/marquee.dart';
 
 class PlayerPage extends StatefulWidget {
   const PlayerPage({Key? key}) : super(key: key);
@@ -19,11 +20,41 @@ class PlayerPage extends StatefulWidget {
 class _PlayerPageState extends State<PlayerPage> {
   var _audioPlayerService = locator<AudioPlayerService>();
 
+  bool hasTextOverflow(String text, TextStyle style,
+      {double minWidth = 0,
+      double maxWidth = double.infinity,
+      int maxLines = 1}) {
+    final TextPainter textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: maxLines,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: minWidth, maxWidth: maxWidth);
+    return textPainter.didExceedMaxLines;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Background Player'),
+        backgroundColor: Colors.white,
+        elevation: 0.5,
+        title: Text(
+          'Background Player',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: MediaQuery.of(context).size.width / 22,
+          ),
+        ),
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_drop_down_rounded,
+            size: 30,
+            color: Theme.of(context).primaryColor,
+          ),
+        ),
         actions: [
           IconButton(
             onPressed: () {
@@ -31,207 +62,269 @@ class _PlayerPageState extends State<PlayerPage> {
               //     fullscreenDialog: true,
               //     builder: (context) => PlaylistPage()));
             },
-            icon: Icon(Icons.playlist_play),
+            icon: Icon(
+              Icons.playlist_play,
+              size: 30,
+              color: Theme.of(context).primaryColor,
+            ),
           )
         ],
       ),
-      body: Container(
-        padding: EdgeInsets.symmetric(vertical: 24, horizontal: 24),
-        width: double.infinity,
-        child: Column(
-          children: [
-            Spacer(),
-            StreamBuilder<QueueState>(
-                stream: playerStream.queueStateStream,
-                builder: (context, snapshot) {
-                  final queueState = snapshot.data;
-                  final mediaItem = queueState?.mediaItem;
-
-                  var imageUrl =
-                      mediaItem?.artUri != null ? mediaItem!.artUri : null;
-
-                  if (imageUrl == null) {
-                    return Container(
-                      color: Theme.of(context).primaryColor,
-                      width: double.infinity,
-                      height: MediaQuery.of(context).size.width - 32,
-                      child: Center(
-                          child: Icon(
-                        Icons.mic_outlined,
-                        color: Colors.white,
-                        size: MediaQuery.of(context).size.width / 3,
-                      )),
-                    );
-                  } else {
-                    return Image.network(
-                      imageUrl.origin + imageUrl.path,
-                      height: MediaQuery.of(context).size.width,
-                    );
-                  }
-                }),
-            Spacer(),
-
-            // controller
-            Container(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // title
-                  StreamBuilder<QueueState>(
-                      stream: playerStream.queueStateStream,
-                      builder: (context, snapshot) {
-                        final queueState = snapshot.data;
-                        final mediaItem = queueState?.mediaItem;
-
-                        var title =
-                            mediaItem?.title != null ? mediaItem!.title : '-';
-
-                        var artist =
-                            mediaItem?.artist != null ? mediaItem!.artist : '-';
-
-                        return Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.only(bottom: 16, top: 8),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(bottom: 8.0),
-                                child: Text(
-                                  title.toString(),
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 18),
-                                ),
-                              ),
-                              Text(artist!.toString()),
-                            ],
-                          ),
-                        );
-                      }),
-
-                  // Seek bar.
-                  StreamBuilder<MediaState>(
-                    stream: playerStream.mediaStateStream,
-                    builder: (context, snapshot) {
-                      final mediaState = snapshot.data;
-
-                      return SeekBar(
-                        duration:
-                            mediaState?.mediaItem?.duration ?? Duration.zero,
-                        position: mediaState?.position ?? Duration.zero,
-                        onChangeEnd: (newPosition) {
-                          _audioPlayerService.handler.seek(newPosition);
-                        },
-                      );
-                    },
-                  ),
-
-                  SizedBox(height: 16.0),
-
-                  // Controllers button
-                  StreamBuilder<QueueState>(
+      body: SafeArea(
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 32),
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                // art media
+                StreamBuilder<QueueState>(
                     stream: playerStream.queueStateStream,
                     builder: (context, snapshot) {
                       final queueState = snapshot.data;
-                      final queue = queueState?.queue ?? const [];
                       final mediaItem = queueState?.mediaItem;
 
-                      if (queue.isNotEmpty)
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            // previous
-                            skipPreviousButton(
-                              context,
-                              onPressed: mediaItem == queue.first
-                                  ? null
-                                  : _audioPlayerService.handler.skipToPrevious,
-                            ),
+                      var imageUrl =
+                          mediaItem?.artUri != null ? mediaItem!.artUri : null;
 
-                            SizedBox(width: 8.0),
-
-                            // Play/pause/stop buttons.
-                            StreamBuilder<bool>(
-                              stream: _audioPlayerService.handler.playbackState
-                                  .map((state) => state.playing)
-                                  .distinct(),
-                              builder: (context, snapshot) {
-                                final playing = snapshot.data ?? false;
-
-                                if (playing)
-                                  return pauseButton(context);
-                                else
-                                  return playButton(context);
-                              },
-                            ),
-
-                            SizedBox(width: 8.0),
-
-                            // next
-                            skipNextButton(
-                              context,
-                              onPressed: mediaItem == queue.last
-                                  ? null
-                                  : _audioPlayerService.handler.skipToNext,
-                            ),
-                          ],
+                      if (imageUrl == null) {
+                        return Container(
+                          color: Theme.of(context).primaryColor,
+                          width: double.infinity,
+                          height: MediaQuery.of(context).size.width - 32,
+                          child: Center(
+                              child: Icon(
+                            Icons.mic_outlined,
+                            color: Colors.white,
+                            size: MediaQuery.of(context).size.width / 3,
+                          )),
                         );
-                      else
-                        // queue empty
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            StreamBuilder<bool>(
-                              stream: _audioPlayerService.handler.playbackState
-                                  .map((state) => state.playing)
-                                  .distinct(),
-                              builder: (context, snapshot) {
-                                final playing = snapshot.data ?? false;
-
-                                if (playing)
-                                  return pauseButton(context);
-                                else
-                                  return playButton(context);
-                              },
-                            ),
-                          ],
+                      } else {
+                        return Image.network(
+                          imageUrl.origin + imageUrl.path,
+                          height: MediaQuery.of(context).size.width,
                         );
-                    },
+                      }
+                    }),
+
+                // controller
+                Container(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // title
+                      StreamBuilder<QueueState>(
+                          stream: playerStream.queueStateStream,
+                          builder: (context, snapshot) {
+                            final queueState = snapshot.data;
+                            final mediaItem = queueState?.mediaItem;
+
+                            var title = mediaItem?.title != null
+                                ? mediaItem!.title
+                                : '-';
+
+                            var artist = mediaItem?.artist != null
+                                ? mediaItem!.artist
+                                : '-';
+
+                            var isTitleOverFlow = hasTextOverflow(
+                              title,
+                              TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                              maxWidth: MediaQuery.of(context).size.width - 64,
+                            );
+
+                            var isArtistOverFlow = hasTextOverflow(
+                              artist!.toString(),
+                              TextStyle(
+                                fontSize: 12,
+                              ),
+                              maxWidth: MediaQuery.of(context).size.width - 64,
+                            );
+
+                            return Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.only(bottom: 0, top: 0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.only(bottom: 8.0),
+                                    child: Container(
+                                      height: 20.0,
+                                      child: isTitleOverFlow
+                                          ? Marquee(
+                                              text: title.toString(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                              blankSpace: 50,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                            )
+                                          : Text(
+                                              title.toString(),
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 18,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                  isArtistOverFlow
+                                      ? Marquee(
+                                          text: title.toString(),
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 18,
+                                          ),
+                                          blankSpace: 50,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                        )
+                                      : Text(
+                                          artist.toString(),
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                          ),
+                                        ),
+                                ],
+                              ),
+                            );
+                          }),
+
+                      // Seek bar.
+                      StreamBuilder<MediaState>(
+                        stream: playerStream.mediaStateStream,
+                        builder: (context, snapshot) {
+                          final mediaState = snapshot.data;
+
+                          return SeekBar(
+                            duration: mediaState?.mediaItem?.duration ??
+                                Duration.zero,
+                            position: mediaState?.position ?? Duration.zero,
+                            onChangeEnd: (newPosition) {
+                              _audioPlayerService.handler.seek(newPosition);
+                            },
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: 16.0),
+
+                      // Controllers button
+                      StreamBuilder<QueueState>(
+                        stream: playerStream.queueStateStream,
+                        builder: (context, snapshot) {
+                          final queueState = snapshot.data;
+                          final queue = queueState?.queue ?? const [];
+                          final mediaItem = queueState?.mediaItem;
+
+                          if (queue.isNotEmpty)
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // previous
+                                skipPreviousButton(
+                                  context,
+                                  onPressed: mediaItem == queue.first
+                                      ? null
+                                      : _audioPlayerService
+                                          .handler.skipToPrevious,
+                                ),
+
+                                SizedBox(width: 8.0),
+
+                                // Play/pause/stop buttons.
+                                StreamBuilder<bool>(
+                                  stream: _audioPlayerService
+                                      .handler.playbackState
+                                      .map((state) => state.playing)
+                                      .distinct(),
+                                  builder: (context, snapshot) {
+                                    final playing = snapshot.data ?? false;
+
+                                    if (playing)
+                                      return pauseButton(context);
+                                    else
+                                      return playButton(context);
+                                  },
+                                ),
+
+                                SizedBox(width: 8.0),
+
+                                // next
+                                skipNextButton(
+                                  context,
+                                  onPressed: mediaItem == queue.last
+                                      ? null
+                                      : _audioPlayerService.handler.skipToNext,
+                                ),
+                              ],
+                            );
+                          else
+                            // queue empty
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                StreamBuilder<bool>(
+                                  stream: _audioPlayerService
+                                      .handler.playbackState
+                                      .map((state) => state.playing)
+                                      .distinct(),
+                                  builder: (context, snapshot) {
+                                    final playing = snapshot.data ?? false;
+
+                                    if (playing)
+                                      return pauseButton(context);
+                                    else
+                                      return playButton(context);
+                                  },
+                                ),
+                              ],
+                            );
+                        },
+                      ),
+
+                      // // Display the processing state.
+                      // StreamBuilder<AudioProcessingState>(
+                      //   stream: _audioPlayerService.handler.playbackState
+                      //       .map((state) => state.processingState)
+                      //       .distinct(),
+                      //   builder: (context, snapshot) {
+                      //     final processingState =
+                      //         snapshot.data ?? AudioProcessingState.idle;
+                      //     return Text(
+                      //         "Processing state: ${describeEnum(processingState)}");
+                      //   },
+                      // ),
+                      // // Display the latest custom event.
+                      // StreamBuilder<dynamic>(
+                      //   stream: _audioPlayerService.handler.customEvent,
+                      //   builder: (context, snapshot) {
+                      //     return Text("custom event: ${snapshot.data}");
+                      //   },
+                      // ),
+                      // // Display the notification click status.
+                      // StreamBuilder<bool>(
+                      //   stream: AudioService.notificationClicked,
+                      //   builder: (context, snapshot) {
+                      //     return Text(
+                      //       'Notification Click Status: ${snapshot.data}',
+                      //     );
+                      //   },
+                      // ),
+
+                      SizedBox(height: 24.0),
+                    ],
                   ),
-                  SizedBox(height: 8.0),
-                  // Display the processing state.
-                  StreamBuilder<AudioProcessingState>(
-                    stream: _audioPlayerService.handler.playbackState
-                        .map((state) => state.processingState)
-                        .distinct(),
-                    builder: (context, snapshot) {
-                      final processingState =
-                          snapshot.data ?? AudioProcessingState.idle;
-                      return Text(
-                          "Processing state: ${describeEnum(processingState)}");
-                    },
-                  ),
-                  // Display the latest custom event.
-                  StreamBuilder<dynamic>(
-                    stream: _audioPlayerService.handler.customEvent,
-                    builder: (context, snapshot) {
-                      return Text("custom event: ${snapshot.data}");
-                    },
-                  ),
-                  // Display the notification click status.
-                  StreamBuilder<bool>(
-                    stream: AudioService.notificationClicked,
-                    builder: (context, snapshot) {
-                      return Text(
-                        'Notification Click Status: ${snapshot.data}',
-                      );
-                    },
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );

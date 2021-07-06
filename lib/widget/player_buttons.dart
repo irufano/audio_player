@@ -12,14 +12,14 @@ Widget playButton(BuildContext context) => Material(
         onTap: _audioPlayerService.handler.play,
         borderRadius: BorderRadius.circular(100),
         child: Container(
-          height: 80,
-          width: 80,
+          height: MediaQuery.of(context).size.height / 12,
+          width: MediaQuery.of(context).size.height / 12,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.play_arrow,
-            size: 48,
+            Icons.play_arrow_rounded,
+            size: MediaQuery.of(context).size.height / 18,
             color: Colors.white,
           ),
         ),
@@ -33,14 +33,14 @@ Widget pauseButton(BuildContext context) => Material(
         onTap: _audioPlayerService.handler.pause,
         borderRadius: BorderRadius.circular(100),
         child: Container(
-          height: 80,
-          width: 80,
+          height: MediaQuery.of(context).size.height / 12,
+          width: MediaQuery.of(context).size.height / 12,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
           ),
           child: Icon(
             Icons.pause,
-            size: 48,
+            size: MediaQuery.of(context).size.height / 18,
             color: Colors.white,
           ),
         ),
