@@ -14,20 +14,25 @@ class AudioPlayerHandler extends BaseAudioHandler
 
   int? get index => _player.currentIndex;
 
+  List<MediaItem> queueMediaItems = [];
+  var _playlist;
+
   AudioPlayerHandler() {
     _init();
   }
 
   Future<void> _init() async {
-    // Load and broadcast the queue
-    queue.add(_mediaLibrary.items[MediaLibrary.albumsRootId]!);
+    // // Load and broadcast the queue
+    // queue.add(_mediaLibrary.items[MediaLibrary.albumsRootId]!);
+
     // For Android 11, record the most recent item so it can be resumed.
     mediaItem
         .whereType<MediaItem>()
         .listen((item) => _recentSubject.add([item]));
     // Broadcast media item changes.
-    _player.currentIndexStream.listen((index) {
-      if (index != null) mediaItem.add(queue.value[index]);
+    _player.currentIndexStream.listen((index) async {
+      if (index != null && index < queue.value.length)
+        mediaItem.add(queue.value[index]);
     });
     // Propagate all events from the audio player to AudioService clients.
     _player.playbackEventStream.listen(_broadcastState);
@@ -35,21 +40,6 @@ class AudioPlayerHandler extends BaseAudioHandler
     _player.processingStateStream.listen((state) {
       if (state == ProcessingState.completed) stop();
     });
-    try {
-      print("### _player.load");
-      // After a cold restart (on Android), _player.load jumps straight from
-      // the loading state to the completed state. Inserting a delay makes it
-      // work. Not sure why!
-      //await Future.delayed(Duration(seconds: 2)); // magic delay
-      await _player.setAudioSource(ConcatenatingAudioSource(
-        children: queue.value
-            .map((item) => AudioSource.uri(Uri.parse(item.id)))
-            .toList(),
-      ));
-      print("### loaded");
-    } catch (e) {
-      print("Error: $e");
-    }
   }
 
   @override
@@ -81,6 +71,83 @@ class AudioPlayerHandler extends BaseAudioHandler
     }
   }
 
+  // for single playing
+  @override
+  Future<void> addQueueItem(MediaItem mediaItem) async {
+    MediaItem media = MediaItem(
+      id: DateTime.now().toIso8601String(),
+      album: mediaItem.album,
+      title: mediaItem.title,
+      artist: mediaItem.artist,
+      duration: mediaItem.duration,
+      artUri: mediaItem.artUri,
+      extras: {"source": mediaItem.extras!['source']},
+    );
+    queueMediaItems.clear();
+    queueMediaItems.add(media);
+    queue.add(queueMediaItems);
+
+    try {
+      print("### _player.load");
+      // After a cold restart (on Android), _player.load jumps straight from
+      // the loading state to the completed state. Inserting a delay makes it
+      // work. Not sure why!
+      //await Future.delayed(Duration(seconds: 2)); // magic delay
+      if (_playlist == null) {
+        // create playlist
+        _playlist = ConcatenatingAudioSource(
+            children: queueMediaItems
+                .asMap()
+                .map((index, item) => MapEntry(
+                      index,
+                      AudioSource.uri(Uri.parse(item.extras!['source'])),
+                    ))
+                .values
+                .toList());
+
+        await _player.setAudioSource(_playlist);
+      } else {
+        // _playlist is exist
+        await _playlist.clear();
+        await _playlist
+            .add(AudioSource.uri(Uri.parse(media.extras!['source'])));
+        await _player.setAudioSource(_playlist);
+      }
+
+      print("### loaded");
+
+      play();
+      print("### playing");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
+  @override
+  Future<void> updateMediaItem(MediaItem mediaItem) async {
+    MediaItem media = MediaItem(
+      id: DateTime.now().toIso8601String(),
+      album: mediaItem.album,
+      title: mediaItem.title,
+      artist: mediaItem.artist,
+      duration: mediaItem.duration,
+      artUri: mediaItem.artUri,
+      extras: {"source": mediaItem.extras!['source']},
+    );
+
+    queueMediaItems.add(media);
+    queue.add(queueMediaItems);
+
+    try {
+      print("### _player.update");
+      await _playlist.add(AudioSource.uri(Uri.parse(media.extras!['source'])));
+
+      print("### update loaded");
+    } catch (e) {
+      print("Error: $e");
+    }
+  }
+
   @override
   Future<void> skipToQueueItem(int index) async {
     // Then default implementations of skipToNext and skipToPrevious provided by
@@ -109,8 +176,16 @@ class AudioPlayerHandler extends BaseAudioHandler
   }
 
   /// Broadcasts the current state to all clients.
-  void _broadcastState(PlaybackEvent event) {
+  void _broadcastState(PlaybackEvent event) async {
+    print('----------------- PLAYBACK EVENT ---------------------');
     final playing = _player.playing;
+
+    final current = mediaItem.value ?? MediaItem;
+    final first = await queue.isEmpty ? queue.value.first : MediaItem;
+    final last = await queue.isEmpty ? queue.value.last : MediaItem;
+
+    print('curent: $current | first queue: $first | last queue: $last');
+
     playbackState.add(playbackState.value.copyWith(
       controls: [
         MediaControl.skipToPrevious,

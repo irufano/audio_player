@@ -14,10 +14,11 @@ class AudioPlayerService {
           AudioPlayerHandler(),
         ]),
       ),
-      config: const AudioServiceConfig(
+      config: AudioServiceConfig(
         androidNotificationChannelId: 'com.ryanheise.myapp.channel.audio',
         androidNotificationChannelName: 'Audio playback',
         androidNotificationOngoing: true,
+        androidStopForegroundOnPause: true,
       ),
     );
   }

@@ -10,8 +10,7 @@ import 'audio_player_service.dart';
 var _audioPlayerService = locator<AudioPlayerService>();
 
 class PlayerStream {
-  /// A stream reporting the combined state of the current media item and its
-  /// current position.
+  // Stream current media item, current position and its buffered positionq
   Stream<MediaState> get mediaStateStream =>
       Rx.combineLatest3<MediaItem?, Duration, Duration, MediaState>(
           _audioPlayerService.handler.mediaItem,
@@ -22,13 +21,17 @@ class PlayerStream {
           (mediaItem, position, bufferedPosition) =>
               MediaState(mediaItem, position, bufferedPosition));
 
-  /// A stream reporting the combined state of the current queue and the current
-  /// media item within that queue.
+  // Stream current queue and the current media item within that queue.
   Stream<QueueState> get queueStateStream =>
       Rx.combineLatest2<List<MediaItem>?, MediaItem?, QueueState>(
           _audioPlayerService.handler.queue,
           _audioPlayerService.handler.mediaItem,
           (queue, mediaItem) => QueueState(queue, mediaItem));
+
+  // Stream playing
+  Stream<bool> get playingStream => _audioPlayerService.handler.playbackState
+      .map((state) => state.playing)
+      .distinct();
 }
 
 final PlayerStream playerStream = PlayerStream();

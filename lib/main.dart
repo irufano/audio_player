@@ -1,4 +1,4 @@
-import 'package:audio_player/page/player_page.dart';
+import 'package:audio_player/page/list_media_item_page.dart';
 import 'package:flutter/material.dart';
 
 import 'locator/locator.dart';
@@ -59,7 +59,7 @@ class _MyHomeState extends State<MyHome> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         fullscreenDialog: true,
-                        builder: (context) => PlayerPage()));
+                        builder: (context) => ListMediaItemPage()));
                   },
                 ),
               ),

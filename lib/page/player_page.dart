@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 
+import 'playlist_page.dart';
+
 class PlayerPage extends StatefulWidget {
   const PlayerPage({Key? key}) : super(key: key);
 
@@ -37,11 +39,12 @@ class _PlayerPageState extends State<PlayerPage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.5,
+        centerTitle: true,
         title: Text(
           'Background Player',
           style: TextStyle(
             color: Colors.black87,
-            fontSize: MediaQuery.of(context).size.width / 22,
+            fontSize: MediaQuery.of(context).size.width / 24,
           ),
         ),
         leading: IconButton(
@@ -57,9 +60,9 @@ class _PlayerPageState extends State<PlayerPage> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigator.of(context).push(MaterialPageRoute(
-              //     fullscreenDialog: true,
-              //     builder: (context) => PlaylistPage()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  fullscreenDialog: true,
+                  builder: (context) => PlaylistPage()));
             },
             icon: Icon(
               Icons.playlist_play,
@@ -287,10 +290,7 @@ class _PlayerPageState extends State<PlayerPage> {
 
                                 // Play/pause/stop buttons.
                                 StreamBuilder<bool>(
-                                  stream: _audioPlayerService
-                                      .handler.playbackState
-                                      .map((state) => state.playing)
-                                      .distinct(),
+                                  stream: playerStream.playingStream,
                                   builder: (context, snapshot) {
                                     final playing = snapshot.data ?? false;
 
