@@ -39,7 +39,7 @@ Widget pauseButton(BuildContext context) => Material(
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.pause,
+            Icons.pause_rounded,
             size: MediaQuery.of(context).size.height / 18,
             color: Colors.white,
           ),
