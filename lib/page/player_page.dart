@@ -4,6 +4,7 @@ import 'package:audio_player/model/queue_state.dart';
 import 'package:audio_player/service/audio_player_service.dart';
 import 'package:audio_player/service/player_stream.dart';
 import 'package:audio_player/widget/player_buttons.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -336,34 +337,35 @@ class _PlayerPageState extends State<PlayerPage> {
                         },
                       ),
 
-                      // // Display the processing state.
-                      // StreamBuilder<AudioProcessingState>(
-                      //   stream: _audioPlayerService.handler.playbackState
-                      //       .map((state) => state.processingState)
-                      //       .distinct(),
-                      //   builder: (context, snapshot) {
-                      //     final processingState =
-                      //         snapshot.data ?? AudioProcessingState.idle;
-                      //     return Text(
-                      //         "Processing state: ${describeEnum(processingState)}");
-                      //   },
-                      // ),
-                      // // Display the latest custom event.
-                      // StreamBuilder<dynamic>(
-                      //   stream: _audioPlayerService.handler.customEvent,
-                      //   builder: (context, snapshot) {
-                      //     return Text("custom event: ${snapshot.data}");
-                      //   },
-                      // ),
-                      // // Display the notification click status.
-                      // StreamBuilder<bool>(
-                      //   stream: AudioService.notificationClicked,
-                      //   builder: (context, snapshot) {
-                      //     return Text(
-                      //       'Notification Click Status: ${snapshot.data}',
-                      //     );
-                      //   },
-                      // ),
+                      // Display the processing state.
+                      StreamBuilder<AudioProcessingState>(
+                        stream: _audioPlayerService.handler.playbackState
+                            .map((state) => state.processingState)
+                            .distinct(),
+                        builder: (context, snapshot) {
+                          final processingState =
+                              snapshot.data ?? AudioProcessingState.idle;
+                          return Text(
+                              "Processing state: ${describeEnum(processingState)}");
+                        },
+                      ),
+                      // Display the latest custom event.
+                      StreamBuilder<dynamic>(
+                        stream: _audioPlayerService.handler.customEvent,
+                        builder: (context, snapshot) {
+                          return Text("custom event: ${snapshot.data}");
+                        },
+                      ),
+                      // Display the notification click status.
+                      StreamBuilder<bool>(
+                        stream: AudioService.notificationClicked,
+                        builder: (context, snapshot) {
+                          // Navigator.pop(context);
+                          return Text(
+                            'Notification Click Status: ${snapshot.data}',
+                          );
+                        },
+                      ),
 
                       SizedBox(height: 24.0),
                     ],
