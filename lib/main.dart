@@ -1,4 +1,5 @@
 import 'package:audio_player/page/list_media_item_page.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 import 'locator/locator.dart';
@@ -10,6 +11,10 @@ var _audioPlayerService = locator<AudioPlayerService>();
 void main() async {
   await setupLocator();
   await _audioPlayerService.setup();
+
+  AudioService.notificationClicked.listen((event) {
+    print('--- Cliked ---');
+  });
 
   runApp(MyApp());
 }
