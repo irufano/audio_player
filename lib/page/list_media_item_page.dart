@@ -65,6 +65,14 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
                       await _audioPlayerService.handler.addQueueItem(
                           _mediaLibrary
                               .items[MediaLibrary.albumsRootId]![index]);
+
+                      if (_mediaLibrary.items[MediaLibrary.albumsRootId]![index]
+                              .extras?['position'] !=
+                          null) {
+                        await _audioPlayerService.handler.seek(_mediaLibrary
+                            .items[MediaLibrary.albumsRootId]![index]
+                            .extras!['position']);
+                      }
                     },
                   );
                 }),

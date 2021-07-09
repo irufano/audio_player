@@ -163,13 +163,19 @@ class AudioPlayerHandler extends BaseAudioHandler
   Future<void> play() => _player.play();
 
   @override
-  Future<void> pause() => _player.pause();
+  Future<void> pause() async {
+    print('#################### PAUSED ####################');
+    print('############### position : ${_player.position} ###############');
+    return _player.pause();
+  }
 
   @override
   Future<void> seek(Duration position) => _player.seek(position);
 
   @override
   Future<void> stop() async {
+    print('@@@@@@@@@@@@@@@@@@@@@ STOPED @@@@@@@@@@@@@@@@@@@@@@@');
+    print('############### position : ${_player.position} ###############');
     await _player.stop();
     await playbackState.firstWhere(
         (state) => state.processingState == AudioProcessingState.idle);

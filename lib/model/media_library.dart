@@ -41,6 +41,21 @@ class MediaLibrary {
               "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3"
         },
       ),
+      MediaItem(
+        // 'https://s3.amazonaws.com/scifri-episodes/scifri20181123-episode.mp3'
+        id: '3',
+        album: "Sound Helix",
+        title: "SoundHelix Song 10 The Examples 1 to 11 are The Same",
+        artist: "T. Schürger",
+        duration: const Duration(milliseconds: 527000),
+        artUri: Uri.parse(
+            'https://thumbs.dreamstime.com/b/dynamic-radial-color-sound-equalizer-design-music-album-cover-template-abstract-circular-digital-data-form-vector-160916775.jpg'),
+        extras: {
+          "source":
+              "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
+          "position": const Duration(milliseconds: 427000)
+        },
+      ),
     ],
   };
 }
