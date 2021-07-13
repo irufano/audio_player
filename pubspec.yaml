@@ -39,12 +39,12 @@ dependencies:
   flutter_tts: ^3.1.0
   just_audio: ^0.8.0
   audio_session: ^0.1.5
-  # audio_service: ^0.17.1
-  audio_service:
-    git: 
-      url: https://github.com/ryanheise/audio_service.git
-      ref: one-isolate
-      path: audio_service
+  audio_service: ^0.18.0-beta.0
+  # audio_service:
+  #   git: 
+  #     url: https://github.com/ryanheise/audio_service.git
+  #     ref: one-isolate
+  #     path: audio_service
 
   ## custom widget
   marquee: ^2.2.0
