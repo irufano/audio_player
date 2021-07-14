@@ -14,8 +14,6 @@ class AudioPlayerHandler extends BaseAudioHandler
 
   PlaybackState? playbackStateOnStop;
 
-  AudioPlayer get player => _player;
-
   int? get index => _player.currentIndex;
 
   List<MediaItem> queueMediaItems = [];
