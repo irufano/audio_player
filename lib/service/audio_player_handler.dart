@@ -160,7 +160,17 @@ class AudioPlayerHandler extends BaseAudioHandler
   }
 
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() async {
+    print('############ position : ${_player.position} ###############');
+    print('############ duration : ${_player.duration} ###############');
+    print('############ length : ${_playlist.length} ###############');
+    print('############ currentIndex : ${_player.currentIndex} ###########');
+    var isLast = _player.currentIndex == (_playlist.length - 1);
+    if (isLast && _player.position >= _player.duration!) {
+      seek(Duration(milliseconds: 0));
+    }
+    return _player.play();
+  }
 
   @override
   Future<void> pause() async {
