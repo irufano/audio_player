@@ -56,10 +56,13 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                   fontSize: MediaQuery.of(context).size.width / 24,
                 ),
               ),
-              leading: Icon(
-                Icons.arrow_drop_down_rounded,
-                size: 30,
-                color: Theme.of(context).primaryColor,
+              leading: RotationTransition(
+                turns: AlwaysStoppedAnimation(0.25),
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  size: 30,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ),
