@@ -1,3 +1,4 @@
+import 'package:audio_player/page/audio_player_sliding.dart';
 import 'package:audio_player/page/list_media_item_page.dart';
 import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
@@ -49,29 +50,36 @@ class MyHome extends StatefulWidget {
 class _MyHomeState extends State<MyHome> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        width: double.infinity,
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: double.infinity,
-                child: ElevatedButton(
-                  child: Text('Background Player'),
-                  onPressed: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                        fullscreenDialog: true,
-                        builder: (context) => ListMediaItemPage()));
-                  },
-                ),
+    return Stack(
+      children: [
+        Scaffold(
+          body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            width: double.infinity,
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      child: Text('Background Player'),
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            fullscreenDialog: true,
+                            builder: (context) => ListMediaItemPage()));
+                      },
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
-      ),
+
+        // sliding
+        AudioPlayerSliding(),
+      ],
     );
   }
 }

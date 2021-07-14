@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 // audio handler using dependency injection
 var _audioPlayerService = locator<AudioPlayerService>();
 
-Widget playButton(BuildContext context, MediaItem mediaItem) => Material(
+Widget playButton(BuildContext context, MediaItem? mediaItem) => Material(
       color: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
@@ -15,7 +15,7 @@ Widget playButton(BuildContext context, MediaItem mediaItem) => Material(
               _audioPlayerService.handler.playbackState.value.processingState ==
                   AudioProcessingState.idle;
           if (isIdle) {
-            _audioPlayerService.handler.addQueueItem(mediaItem);
+            _audioPlayerService.handler.addQueueItem(mediaItem!);
           } else {
             _audioPlayerService.handler.play();
           }

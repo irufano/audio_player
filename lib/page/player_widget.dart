@@ -299,7 +299,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                       if (playing)
                                         return pauseButton(context);
                                       else
-                                        return playButton(context, mediaItem!);
+                                        return playButton(context, mediaItem);
                                     },
                                   ),
 
@@ -331,7 +331,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                       if (playing)
                                         return pauseButton(context);
                                       else
-                                        return playButton(context, mediaItem!);
+                                        return playButton(context, mediaItem);
                                     },
                                   ),
                                   SizedBox(),
