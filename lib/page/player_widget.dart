@@ -12,11 +12,8 @@ import '../service/player_stream.dart';
 import '../widget/player_buttons.dart';
 
 class PlayerWidget extends StatefulWidget {
-  final Function()? appBarOnTap;
-
   const PlayerWidget({
     Key? key,
-    this.appBarOnTap,
   }) : super(key: key);
 
   @override
@@ -41,35 +38,12 @@ class _PlayerWidgetState extends State<PlayerWidget> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        children: [
-          InkWell(
-            onTap: widget.appBarOnTap,
-            child: AppBar(
-              backgroundColor: Colors.white,
-              elevation: 0.5,
-              centerTitle: true,
-              title: Text(
-                'Background Player',
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontSize: MediaQuery.of(context).size.width / 24,
-                ),
-              ),
-              leading: RotationTransition(
-                turns: AlwaysStoppedAnimation(0.25),
-                child: Icon(
-                  Icons.chevron_right_rounded,
-                  size: 30,
-                  color: Theme.of(context).primaryColor,
-                ),
-              ),
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 32),
-            width: double.infinity,
-            child: SingleChildScrollView(
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 32),
+              width: double.infinity,
               child: Column(
                 children: [
                   // art media
@@ -279,6 +253,11 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                               return Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  // backward
+                                  seekBackwardButton(
+                                    context,
+                                  ),
+
                                   // previous
                                   skipPreviousButton(
                                     context,
@@ -312,6 +291,11 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                         ? null
                                         : _audioPlayerService
                                             .handler.skipToNext,
+                                  ),
+
+                                  // forward
+                                  seekForwardButton(
+                                    context,
                                   ),
                                 ],
                               );
@@ -377,8 +361,8 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

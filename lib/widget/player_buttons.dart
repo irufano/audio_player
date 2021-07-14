@@ -110,3 +110,21 @@ Widget skipNextButton(BuildContext context, {Function()? onPressed}) =>
       iconSize: 48.0,
       onPressed: onPressed,
     );
+
+Widget seekForwardButton(BuildContext context) => IconButton(
+      icon: Icon(Icons.forward_10_rounded),
+      iconSize: 30.0,
+      onPressed: () async {
+        await _audioPlayerService.handler.seekForward(true);
+        await _audioPlayerService.handler.seekForward(false);
+      },
+    );
+
+Widget seekBackwardButton(BuildContext context) => IconButton(
+      icon: Icon(Icons.replay_10_rounded),
+      iconSize: 30.0,
+      onPressed: () async {
+        await _audioPlayerService.handler.seekBackward(true);
+        await _audioPlayerService.handler.seekBackward(false);
+      },
+    );
