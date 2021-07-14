@@ -59,7 +59,7 @@ class _AudioPlayerSlidingState extends State<AudioPlayerSliding> {
           return SizedBox(height: 0);
         } else {
           return SlidingUpPanelWidget(
-            controlHeight: 100.0,
+            controlHeight: 80.0,
             anchor: 0.4,
             panelController: panelController,
             enableOnTap: false,

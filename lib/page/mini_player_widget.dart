@@ -1,4 +1,6 @@
+import 'package:audio_player/model/media_state.dart';
 import 'package:audio_player/widget/player_buttons.dart';
+import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 
@@ -61,98 +63,125 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
         );
 
         return Container(
-          height: 100,
+          height: 80,
           width: double.infinity,
-          child: Row(
+          child: Column(
             children: [
-              (imageUrl == null)
-                  ? Container(
-                      width: 100,
-                      color: Theme.of(context).primaryColor,
-                      child: Center(
-                        child: Icon(
-                          Icons.mic_outlined,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    )
-                  : Image.network(
-                      imageUrl.origin + imageUrl.path,
+              StreamBuilder<MediaState>(
+                stream: playerStream.mediaStateStream,
+                builder: (context, snapshot) {
+                  final mediaState = snapshot.data;
+
+                  var now = mediaState?.position ?? Duration.zero;
+                  var total = mediaState?.mediaItem?.duration ?? Duration.zero;
+
+                  return Container(
+                    child: ProgressBar(
+                      thumbRadius: 0,
+                      barHeight: 1,
+                      progress: now,
+                      total: total,
+                      timeLabelLocation: TimeLabelLocation.none,
                     ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16.0, right: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 8.0),
-                        child: Container(
-                          height: 20.0,
-                          child: isTitleOverFlow
-                              ? Marquee(
-                                  startPadding: 20,
-                                  text: title.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                  blankSpace: 50,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                )
-                              : Text(
-                                  title.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
+                  );
+                },
+              ),
+              Flexible(
+                child: Row(
+                  children: [
+                    (imageUrl == null)
+                        ? Container(
+                            width: 80,
+                            color: Theme.of(context).primaryColor,
+                            child: Center(
+                              child: Icon(
+                                Icons.mic_outlined,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          )
+                        : Image.network(
+                            imageUrl.origin + imageUrl.path,
+                          ),
+                    Expanded(
+                      child: Padding(
+                        padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 8.0),
+                              child: Container(
+                                height: 20.0,
+                                child: isTitleOverFlow
+                                    ? Marquee(
+                                        startPadding: 20,
+                                        text: title.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                        blankSpace: 50,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                      )
+                                    : Text(
+                                        title.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsets.only(bottom: 0.0),
+                              child: Container(
+                                height: 20.0,
+                                child: isArtistOverFlow
+                                    ? Marquee(
+                                        startPadding: 20,
+                                        text: title.toString(),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                        blankSpace: 50,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                      )
+                                    : Text(
+                                        artist.toString(),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(bottom: 0.0),
-                        child: Container(
-                          height: 20.0,
-                          child: isArtistOverFlow
-                              ? Marquee(
-                                  startPadding: 20,
-                                  text: title.toString(),
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12,
-                                  ),
-                                  blankSpace: 50,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                )
-                              : Text(
-                                  artist.toString(),
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(right: 16),
+                      child: StreamBuilder<bool>(
+                          stream: _audioPlayerService.handler.playbackState
+                              .map((state) => state.playing)
+                              .distinct(),
+                          builder: (context, snapshot) {
+                            final playing = snapshot.data ?? false;
+
+                            if (playing)
+                              return pauseButtonMini(context);
+                            else
+                              return playButtonMini(context, mediaItem);
+                          }),
+                    )
+                  ],
                 ),
               ),
-              Container(
-                padding: EdgeInsets.only(right: 16),
-                child: StreamBuilder<bool>(
-                    stream: _audioPlayerService.handler.playbackState
-                        .map((state) => state.playing)
-                        .distinct(),
-                    builder: (context, snapshot) {
-                      final playing = snapshot.data ?? false;
-
-                      if (playing)
-                        return pauseButtonMini(context);
-                      else
-                        return playButtonMini(context, mediaItem);
-                    }),
-              )
             ],
           ),
         );
