@@ -109,19 +109,40 @@ class _AudioPlayerSlidingState extends State<AudioPlayerSliding> {
                       child: MiniPlayerWidget(),
                     ),
                   ),
+                  InkWell(
+                    onTap: () {
+                      if (panelController.status ==
+                          SlidingUpPanelStatus.expanded) {
+                        panelController.collapse();
+                        setState(() {
+                          _isPanelExpanded = false;
+                        });
+                      }
+                    },
+                    child: AppBar(
+                      backgroundColor: Colors.white,
+                      elevation: 0.5,
+                      centerTitle: true,
+                      title: Text(
+                        'Background Player',
+                        style: TextStyle(
+                          color: Colors.black87,
+                          fontSize: MediaQuery.of(context).size.width / 24,
+                        ),
+                      ),
+                      leading: RotationTransition(
+                        turns: AlwaysStoppedAnimation(0.25),
+                        child: Icon(
+                          Icons.chevron_right_rounded,
+                          size: 30,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ),
+                  ),
                   Flexible(
                     child: Container(
-                      child: PlayerWidget(
-                        appBarOnTap: () {
-                          if (panelController.status ==
-                              SlidingUpPanelStatus.expanded) {
-                            panelController.collapse();
-                            setState(() {
-                              _isPanelExpanded = false;
-                            });
-                          }
-                        },
-                      ),
+                      child: PlayerWidget(),
                     ),
                   ),
                 ],
