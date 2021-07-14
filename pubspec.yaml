@@ -49,6 +49,7 @@ dependencies:
   ## custom widget
   marquee: ^2.2.0
   audio_video_progress_bar: ^0.5.0
+  flutter_sliding_up_panel: ^2.0.1
 
 dev_dependencies:
   flutter_test:
