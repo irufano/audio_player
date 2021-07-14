@@ -7,14 +7,19 @@ import 'mini_player_widget.dart';
 import 'player_widget.dart';
 
 class AudioPlayerSliding extends StatefulWidget {
-  const AudioPlayerSliding({Key? key}) : super(key: key);
+  final bool expandPanel;
+
+  const AudioPlayerSliding({
+    Key? key,
+    this.expandPanel = false,
+  }) : super(key: key);
 
   @override
   _AudioPlayerSlidingState createState() => _AudioPlayerSlidingState();
 }
 
 class _AudioPlayerSlidingState extends State<AudioPlayerSliding> {
-  late ScrollController panelScrollController;
+  late ScrollController panelScrollController = ScrollController();
 
   ///The controller of sliding up panel
   SlidingUpPanelController panelController = SlidingUpPanelController();
@@ -22,19 +27,24 @@ class _AudioPlayerSlidingState extends State<AudioPlayerSliding> {
 
   @override
   void initState() {
-    panelScrollController = ScrollController();
-    panelScrollController.addListener(() {
-      if (panelScrollController.offset >=
-              panelScrollController.position.maxScrollExtent &&
-          !panelScrollController.position.outOfRange) {
-        panelController.expand();
-      } else if (panelScrollController.offset <=
-              panelScrollController.position.minScrollExtent &&
-          !panelScrollController.position.outOfRange) {
-        // panelController.anchor();
-      } else {}
-    });
+    panelScrollController.addListener(_panelScrollListener);
+    if (widget.expandPanel) {
+      _isPanelExpanded = true;
+    }
+
     super.initState();
+  }
+
+  void _panelScrollListener() {
+    if (panelScrollController.offset >=
+            panelScrollController.position.maxScrollExtent &&
+        !panelScrollController.position.outOfRange) {
+      panelController.expand();
+    } else if (panelScrollController.offset <=
+            panelScrollController.position.minScrollExtent &&
+        !panelScrollController.position.outOfRange) {
+      // panelController.anchor();
+    } else {}
   }
 
   @override
@@ -53,6 +63,9 @@ class _AudioPlayerSlidingState extends State<AudioPlayerSliding> {
             anchor: 0.4,
             panelController: panelController,
             enableOnTap: false,
+            panelStatus: _isPanelExpanded
+                ? SlidingUpPanelStatus.expanded
+                : SlidingUpPanelStatus.collapsed,
             dragEnd: (details) {
               if (panelController.status == SlidingUpPanelStatus.expanded) {
                 setState(() {

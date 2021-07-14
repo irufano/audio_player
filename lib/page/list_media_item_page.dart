@@ -1,22 +1,10 @@
 import 'package:audio_player/page/audio_player_sliding.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../locator/locator.dart';
 import '../model/media_library.dart';
-import '../model/media_state.dart';
-import '../model/queue_state.dart';
-import 'player_page.dart';
-import 'player_widget.dart';
 import '../service/audio_player_service.dart';
-import '../service/player_stream.dart';
-import '../widget/player_buttons.dart';
-import 'package:audio_service/audio_service.dart';
-import 'package:audio_video_progress_bar/audio_video_progress_bar.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_sliding_up_panel/flutter_sliding_up_panel.dart';
-import 'package:marquee/marquee.dart';
-
-import 'mini_player_widget.dart';
 import 'playlist_page.dart';
 
 class ListMediaItemPage extends StatefulWidget {
@@ -30,26 +18,8 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
   AudioPlayerService _audioPlayerService = locator<AudioPlayerService>();
   MediaLibrary _mediaLibrary = MediaLibrary();
 
-  late ScrollController panelScrollController;
-
-  ///The controller of sliding up panel
-  SlidingUpPanelController panelController = SlidingUpPanelController();
-  bool _isPanelExpanded = false;
-
   @override
   void initState() {
-    panelScrollController = ScrollController();
-    panelScrollController.addListener(() {
-      if (panelScrollController.offset >=
-              panelScrollController.position.maxScrollExtent &&
-          !panelScrollController.position.outOfRange) {
-        panelController.expand();
-      } else if (panelScrollController.offset <=
-              panelScrollController.position.minScrollExtent &&
-          !panelScrollController.position.outOfRange) {
-        // panelController.anchor();
-      } else {}
-    });
     super.initState();
   }
 
@@ -67,6 +37,10 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
                       fullscreenDialog: true,
                       builder: (context) => PlaylistPage()));
                 },
+                icon: Icon(Icons.playlist_play),
+              ),
+              IconButton(
+                onPressed: () {},
                 icon: Icon(Icons.playlist_play),
               )
             ],
@@ -246,7 +220,7 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
         ),
 
         // sliding
-        AudioPlayerSliding(),
+        AudioPlayerSliding(expandPanel: true),
       ],
     );
   }
