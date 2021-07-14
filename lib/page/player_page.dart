@@ -308,7 +308,7 @@ class _PlayerPageState extends State<PlayerPage> {
                                       if (playing)
                                         return pauseButton(context);
                                       else
-                                        return playButton(context);
+                                        return playButton(context, mediaItem!);
                                     },
                                   ),
 
@@ -340,7 +340,7 @@ class _PlayerPageState extends State<PlayerPage> {
                                       if (playing)
                                         return pauseButton(context);
                                       else
-                                        return playButton(context);
+                                        return playButton(context, mediaItem!);
                                     },
                                   ),
                                 ],

@@ -12,6 +12,10 @@ class AudioPlayerHandler extends BaseAudioHandler
   final _mediaLibrary = MediaLibrary();
   final _player = AudioPlayer();
 
+  PlaybackState? playbackStateOnStop;
+
+  AudioPlayer get player => _player;
+
   int? get index => _player.currentIndex;
 
   List<MediaItem> queueMediaItems = [];
@@ -35,7 +39,10 @@ class AudioPlayerHandler extends BaseAudioHandler
         mediaItem.add(queue.value[index]);
     });
     // Propagate all events from the audio player to AudioService clients.
-    _player.playbackEventStream.listen(_broadcastState);
+    _player.playbackEventStream.listen((playbackEvent) {
+      _broadcastState(playbackEvent);
+    });
+
     // In this example, the service stops when reaching the end.
     _player.processingStateStream.listen((state) {
       if (state == ProcessingState.completed) stop();
@@ -93,6 +100,7 @@ class AudioPlayerHandler extends BaseAudioHandler
       // the loading state to the completed state. Inserting a delay makes it
       // work. Not sure why!
       //await Future.delayed(Duration(seconds: 2)); // magic delay
+
       if (_playlist == null) {
         // create playlist
         _playlist = ConcatenatingAudioSource(
@@ -116,7 +124,12 @@ class AudioPlayerHandler extends BaseAudioHandler
 
       print("### loaded");
 
-      play();
+      if (playbackStateOnStop != null) {
+        seek(playbackStateOnStop!.position);
+      }
+
+      await play();
+
       print("### playing");
     } catch (e) {
       print("Error: $e");
@@ -169,6 +182,7 @@ class AudioPlayerHandler extends BaseAudioHandler
     if (isLast && _player.position >= _player.duration!) {
       seek(Duration(milliseconds: 0));
     }
+
     return _player.play();
   }
 
@@ -176,24 +190,34 @@ class AudioPlayerHandler extends BaseAudioHandler
   Future<void> pause() async {
     print('#################### PAUSED ####################');
     print('############### position : ${_player.position} ###############');
+
     return _player.pause();
   }
 
   @override
-  Future<void> seek(Duration position) => _player.seek(position);
+  Future<void> seek(Duration position) async {
+    return _player.seek(position);
+  }
 
   @override
   Future<void> stop() async {
     print('@@@@@@@@@@@@@@@@@@@@@ STOPED @@@@@@@@@@@@@@@@@@@@@@@');
     print('############### position : ${_player.position} ###############');
+
     await _player.stop();
+
+    playbackStateOnStop = playbackState.value;
+
     await playbackState.firstWhere(
         (state) => state.processingState == AudioProcessingState.idle);
   }
 
   /// Broadcasts the current state to all clients.
   void _broadcastState(PlaybackEvent event) async {
-    print('----------------- PLAYBACK EVENT ---------------------');
+    print('-------------- PLAYBACK EVENT ------------------');
+    print('-------------- position ${_player.position}------');
+    print('-------------- buffered ${_player.bufferedPosition}----');
+
     final playing = _player.playing;
 
     final current = mediaItem.value ?? MediaItem;

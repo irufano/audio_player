@@ -1,15 +1,25 @@
 import 'package:audio_player/locator/locator.dart';
 import 'package:audio_player/service/audio_player_service.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 
 // audio handler using dependency injection
 var _audioPlayerService = locator<AudioPlayerService>();
 
-Widget playButton(BuildContext context) => Material(
+Widget playButton(BuildContext context, MediaItem mediaItem) => Material(
       color: Theme.of(context).primaryColor,
       borderRadius: BorderRadius.circular(100),
       child: InkWell(
-        onTap: _audioPlayerService.handler.play,
+        onTap: () {
+          var isIdle =
+              _audioPlayerService.handler.playbackState.value.processingState ==
+                  AudioProcessingState.idle;
+          if (isIdle) {
+            _audioPlayerService.handler.addQueueItem(mediaItem);
+          } else {
+            _audioPlayerService.handler.play();
+          }
+        },
         borderRadius: BorderRadius.circular(100),
         child: Container(
           height: MediaQuery.of(context).size.height / 12,
@@ -24,6 +34,20 @@ Widget playButton(BuildContext context) => Material(
           ),
         ),
       ),
+    );
+
+Widget playButtonMini(BuildContext context, MediaItem? mediaItem) => IconButton(
+      icon: Icon(Icons.play_arrow_rounded, size: 32),
+      onPressed: () {
+        var isIdle =
+            _audioPlayerService.handler.playbackState.value.processingState ==
+                AudioProcessingState.idle;
+        if (isIdle) {
+          _audioPlayerService.handler.addQueueItem(mediaItem!);
+        } else {
+          _audioPlayerService.handler.play();
+        }
+      },
     );
 
 Widget pauseButton(BuildContext context) => Material(
@@ -45,6 +69,11 @@ Widget pauseButton(BuildContext context) => Material(
           ),
         ),
       ),
+    );
+
+Widget pauseButtonMini(BuildContext context) => IconButton(
+      icon: Icon(Icons.pause_rounded, size: 32),
+      onPressed: _audioPlayerService.handler.pause,
     );
 
 Widget stopButton(BuildContext context) => Material(

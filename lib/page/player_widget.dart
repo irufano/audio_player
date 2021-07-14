@@ -217,7 +217,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                 Padding(
                                   padding: const EdgeInsets.only(top: 16.0),
                                   child: ProgressBar(
-                                    thumbRadius: 5.0,
+                                    thumbRadius: 6.0,
                                     timeLabelLocation: TimeLabelLocation.none,
                                     progress: now,
                                     buffered: buffered,
@@ -299,7 +299,7 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                       if (playing)
                                         return pauseButton(context);
                                       else
-                                        return playButton(context);
+                                        return playButton(context, mediaItem!);
                                     },
                                   ),
 
@@ -331,9 +331,10 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                                       if (playing)
                                         return pauseButton(context);
                                       else
-                                        return playButton(context);
+                                        return playButton(context, mediaItem!);
                                     },
                                   ),
+                                  SizedBox(),
                                 ],
                               );
                           },

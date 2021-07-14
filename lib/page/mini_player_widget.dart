@@ -1,3 +1,5 @@
+import 'package:audio_player/widget/player_buttons.dart';
+import 'package:audio_service/audio_service.dart';
 import 'package:flutter/material.dart';
 import 'package:marquee/marquee.dart';
 
@@ -66,7 +68,7 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
             children: [
               (imageUrl == null)
                   ? Container(
-                      width: 64,
+                      width: 100,
                       color: Theme.of(context).primaryColor,
                       child: Center(
                         child: Icon(
@@ -86,65 +88,59 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 8.0),
-                          child: Container(
-                            height: 20.0,
-                            child: isTitleOverFlow
-                                ? Marquee(
-                                    startPadding: 20,
-                                    text: title.toString(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
-                                    blankSpace: 50,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                  )
-                                : Text(
-                                    title.toString(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 14,
-                                    ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 8.0),
+                        child: Container(
+                          height: 20.0,
+                          child: isTitleOverFlow
+                              ? Marquee(
+                                  startPadding: 20,
+                                  text: title.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
                                   ),
-                          ),
+                                  blankSpace: 50,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                )
+                              : Text(
+                                  title.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
                         ),
                       ),
-                      Flexible(
-                        child: Padding(
-                          padding: EdgeInsets.only(bottom: 0.0),
-                          child: Container(
-                            height: 20.0,
-                            child: isArtistOverFlow
-                                ? Marquee(
-                                    startPadding: 20,
-                                    text: title.toString(),
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                    blankSpace: 50,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                  )
-                                : Text(
-                                    artist.toString(),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                    ),
+                      Padding(
+                        padding: EdgeInsets.only(bottom: 0.0),
+                        child: Container(
+                          height: 20.0,
+                          child: isArtistOverFlow
+                              ? Marquee(
+                                  startPadding: 20,
+                                  text: title.toString(),
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12,
                                   ),
-                          ),
+                                  blankSpace: 50,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                )
+                              : Text(
+                                  artist.toString(),
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
-              Flexible(
-                flex: 0,
+              Container(
+                padding: EdgeInsets.only(right: 16),
                 child: StreamBuilder<bool>(
                     stream: _audioPlayerService.handler.playbackState
                         .map((state) => state.playing)
@@ -153,15 +149,9 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                       final playing = snapshot.data ?? false;
 
                       if (playing)
-                        return IconButton(
-                          icon: Icon(Icons.pause),
-                          onPressed: _audioPlayerService.handler.pause,
-                        );
+                        return pauseButtonMini(context);
                       else
-                        return IconButton(
-                          icon: Icon(Icons.play_arrow),
-                          onPressed: _audioPlayerService.handler.play,
-                        );
+                        return playButtonMini(context, mediaItem);
                     }),
               )
             ],
