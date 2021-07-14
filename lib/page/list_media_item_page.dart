@@ -257,20 +257,7 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
                 controlHeight: 100.0,
                 anchor: 0.4,
                 panelController: panelController,
-                enableOnTap: true,
-                onTap: () {
-                  if (SlidingUpPanelStatus.expanded == panelController.status) {
-                    panelController.collapse();
-                    setState(() {
-                      _isPanelExpanded = false;
-                    });
-                  } else {
-                    panelController.expand();
-                    setState(() {
-                      _isPanelExpanded = true;
-                    });
-                  }
-                },
+                enableOnTap: false,
                 dragEnd: (details) {
                   if (panelController.status == SlidingUpPanelStatus.expanded) {
                     setState(() {
