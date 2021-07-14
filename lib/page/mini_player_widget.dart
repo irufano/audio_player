@@ -101,8 +101,9 @@ class _MiniPlayerWidgetState extends State<MiniPlayerWidget> {
                               ),
                             ),
                           )
-                        : Image.network(
-                            imageUrl.origin + imageUrl.path,
+                        : FadeInImage.assetNetwork(
+                            placeholder: 'assets/images/placeholder.png',
+                            image: imageUrl.origin + imageUrl.path,
                           ),
                     Expanded(
                       child: Padding(
