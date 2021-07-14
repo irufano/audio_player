@@ -81,8 +81,17 @@ class AudioPlayerHandler extends BaseAudioHandler
   // for single playing
   @override
   Future<void> addQueueItem(MediaItem mediaItem) async {
+    var id;
+    try {
+      if (DateTime.parse(mediaItem.id) is DateTime) {
+        id = mediaItem.id;
+      }
+    } catch (e) {
+      id = DateTime.now().toIso8601String();
+    }
+
     MediaItem media = MediaItem(
-      id: DateTime.now().toIso8601String(),
+      id: id,
       album: mediaItem.album,
       title: mediaItem.title,
       artist: mediaItem.artist,

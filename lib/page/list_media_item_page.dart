@@ -39,10 +39,6 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
                 },
                 icon: Icon(Icons.playlist_play),
               ),
-              IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.playlist_play),
-              )
             ],
           ),
           body: Stack(
