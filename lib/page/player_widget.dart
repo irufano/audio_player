@@ -12,7 +12,12 @@ import '../service/player_stream.dart';
 import '../widget/player_buttons.dart';
 
 class PlayerWidget extends StatefulWidget {
-  const PlayerWidget({Key? key}) : super(key: key);
+  final Function()? appBarOnTap;
+
+  const PlayerWidget({
+    Key? key,
+    this.appBarOnTap,
+  }) : super(key: key);
 
   @override
   _PlayerWidgetState createState() => _PlayerWidgetState();
@@ -38,21 +43,24 @@ class _PlayerWidgetState extends State<PlayerWidget> {
     return SafeArea(
       child: Column(
         children: [
-          AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0.5,
-            centerTitle: true,
-            title: Text(
-              'Background Player',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: MediaQuery.of(context).size.width / 24,
+          InkWell(
+            onTap: widget.appBarOnTap,
+            child: AppBar(
+              backgroundColor: Colors.white,
+              elevation: 0.5,
+              centerTitle: true,
+              title: Text(
+                'Background Player',
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontSize: MediaQuery.of(context).size.width / 24,
+                ),
               ),
-            ),
-            leading: Icon(
-              Icons.arrow_drop_down_rounded,
-              size: 30,
-              color: Theme.of(context).primaryColor,
+              leading: Icon(
+                Icons.arrow_drop_down_rounded,
+                size: 30,
+                color: Theme.of(context).primaryColor,
+              ),
             ),
           ),
           Container(

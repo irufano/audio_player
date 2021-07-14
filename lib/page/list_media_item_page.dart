@@ -289,11 +289,32 @@ class _ListMediaItemPageState extends State<ListMediaItemPage> {
                       // mini player
                       Visibility(
                         visible: !_isPanelExpanded,
-                        child: MiniPlayerWidget(),
+                        child: InkWell(
+                          onTap: () {
+                            if (panelController.status ==
+                                SlidingUpPanelStatus.collapsed) {
+                              panelController.expand();
+                              setState(() {
+                                _isPanelExpanded = true;
+                              });
+                            }
+                          },
+                          child: MiniPlayerWidget(),
+                        ),
                       ),
                       Flexible(
                         child: Container(
-                          child: PlayerWidget(),
+                          child: PlayerWidget(
+                            appBarOnTap: () {
+                              if (panelController.status ==
+                                  SlidingUpPanelStatus.expanded) {
+                                panelController.collapse();
+                                setState(() {
+                                  _isPanelExpanded = false;
+                                });
+                              }
+                            },
+                          ),
                         ),
                       ),
                     ],
