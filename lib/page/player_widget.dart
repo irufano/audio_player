@@ -70,8 +70,9 @@ class _PlayerWidgetState extends State<PlayerWidget> {
                             )),
                           );
                         } else {
-                          return Image.network(
-                            imageUrl.origin + imageUrl.path,
+                          return FadeInImage.assetNetwork(
+                            placeholder: 'assets/images/placeholder.png',
+                            image: imageUrl.origin + imageUrl.path,
                             height: MediaQuery.of(context).size.width,
                           );
                         }
